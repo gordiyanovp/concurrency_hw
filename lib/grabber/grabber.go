@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -25,5 +26,22 @@ func Read(id, hash int) (byte, error) {
 }
 
 func Run(num int, hash int) []byte {
+	result := make([]byte, num, num)
+	wg := &sync.WaitGroup{}
+	for i := 0; i < num; i++ {
+		wg.Add(1)
+		go func(k int) {
+			defer wg.Done()
+			for {
+				r, err := Read(k, hash)
+				if err != nil {
+					continue
+				}
+				result[k] = r
+				break
+			}
+		}(i)
+	}
+	wg.Wait()
 	return result
 }

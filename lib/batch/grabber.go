@@ -24,9 +24,9 @@ func getBatch(n int64, pool int64) (res []user) {
 			defer wg.Done()
 			ch <- struct{}{}
 			u := getOne(i)
-			mu.Lock()
+			// mu.Lock()
 			res = append(res, u)
-			mu.Unlock()
+			// mu.Unlock()
 			<-ch
 		}(int64(i))
 	}
